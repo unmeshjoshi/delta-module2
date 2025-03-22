@@ -23,3 +23,24 @@ To solve this, we:
 - Store those log entries atomically in a versioned JSON file (like `00000000000000000001.json`).
 - Make all file additions and deletions **explicit and versioned**.
 - All the reads should only happen at a specific version of the latest snapshot
+
+## Project Structure
+
+```
+src/main/java/com/example/deltajava/
+├── actions/               # Action classes for the Delta log
+│   ├── Action.java        # Base interface for all actions
+│   ├── AddFile.java       # Adding files to the table
+│   ├── CommitInfo.java    # Commit metadata
+│   ├── Metadata.java      # Table metadata
+│   ├── Protocol.java      # Protocol versioning 
+│   └── RemoveFile.java    # Removing files from the table
+├── util/
+│   ├── JsonUtil.java      # JSON serialization utilities
+│   ├── FileNames.java     # Delta file naming utilities
+│   ├── CsvUtil.java       # CSV processing utilities
+│   ├── ParquetUtil.java   # Parquet file handling
+├── DeltaLog.java          # Core Delta log management
+├── DeltaTable.java        # Table operations interface 
+└── Snapshot.java          # Point-in-time view of the table
+```
