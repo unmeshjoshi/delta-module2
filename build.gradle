@@ -1,0 +1,111 @@
+plugins {
+    id 'java'
+    id 'application'
+}
+
+group = 'com.example'
+version = '1.0-SNAPSHOT'
+sourceCompatibility = '11'
+targetCompatibility = '11'
+
+repositories {
+    mavenCentral()
+}
+
+ext {
+    jacksonVersion = '2.15.3'
+    junitVersion = '5.9.2'
+}
+
+dependencies {
+    // Jackson for JSON processing
+    implementation "com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}"
+    implementation "com.fasterxml.jackson.core:jackson-annotations:${jacksonVersion}"
+    implementation "com.fasterxml.jackson.core:jackson-core:${jacksonVersion}"
+    
+    // JUnit for testing
+    testImplementation "org.junit.jupiter:junit-jupiter-api:${junitVersion}"
+    testImplementation "org.junit.jupiter:junit-jupiter-params:${junitVersion}"
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${junitVersion}"
+    
+    // Parquet and Avro dependencies for checkpoints
+    implementation 'org.apache.parquet:parquet-avro:1.12.3'
+    implementation 'org.apache.avro:avro:1.11.0'
+    implementation 'org.apache.hadoop:hadoop-common:3.3.4'
+    implementation 'org.apache.hadoop:hadoop-mapreduce-client-core:3.3.4'
+    implementation 'org.apache.hadoop:hadoop-client:3.3.4'
+}
+
+test {
+    useJUnitPlatform()
+    testLogging {
+        events "passed", "skipped", "failed"
+    }
+}
+
+// If you want to create a runnable application
+application {
+    mainClass = 'com.example.deltajava.DeltaApp'
+}
+
+// Define Source Sets if you have different structure
+sourceSets {
+    main {
+        java {
+            srcDirs = ['src/main/java']
+        }
+        resources {
+            srcDirs = ['src/main/resources']
+        }
+    }
+    test {
+        java {
+            srcDirs = ['src/test/java']
+        }
+        resources {
+            srcDirs = ['src/test/resources']
+        }
+    }
+}
+
+// Create a jar with dependencies
+tasks.register('fatJar', Jar) {
+    archiveClassifier = 'all'
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    
+    manifest {
+        attributes('Main-Class': 'com.example.deltajava.DeltaApp')
+    }
+    
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+    
+    with jar
+}
+
+// Add a task to run examples
+tasks.register('runExample', JavaExec) {
+    group = 'application'
+    description = 'Run an example transaction'
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'com.example.deltajava.examples.TransactionExample'
+}
+
+// Add a task to run the DeltaTable example
+tasks.register('runDeltaTableExample', JavaExec) {
+    group = 'application'
+    description = 'Run the DeltaTable example'
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'com.example.deltajava.examples.DeltaTableExample'
+}
+
+// Show deprecation warnings
+tasks.withType(JavaCompile) {
+    options.deprecation = true
+}
+
+// For Gradle 8.10+
+wrapper {
+    gradleVersion = '8.10.2'
+} 

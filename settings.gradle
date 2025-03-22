@@ -1,0 +1,4 @@
+rootProject.name = 'deltajava'
+
+// Include subprojects if any
+// include ':subproject1', ':subproject2' 
