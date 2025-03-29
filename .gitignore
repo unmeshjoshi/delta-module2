@@ -26,7 +26,7 @@ bin/
 
 # Java
 *.class
-*.jar
+#*.jar
 *.war
 *.ear
 hs_err_pid*
