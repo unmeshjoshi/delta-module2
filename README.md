@@ -44,3 +44,8 @@ src/main/java/com/example/deltajava/
 ├── DeltaTable.java        # Table operations interface 
 └── Snapshot.java          # Point-in-time view of the table
 ```
+
+
+## Assignment
+
+- Implement DeltaTable.readAll method to pass the test testReadRecordsAtAVersion
